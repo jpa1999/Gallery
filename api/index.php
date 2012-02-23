@@ -71,6 +71,9 @@
 	//---------------------------------
 	if( $_POST["q"] == "upload" ){
 		
+		if( !file_exists("../uploads/thumbs/")){
+			exit("No thumbs folder");
+		}
 		$description = cleanString( $_POST['description'] );
 		$folder_id = cleanString( $_POST['folder_id'] );
 		

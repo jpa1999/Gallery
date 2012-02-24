@@ -71,8 +71,11 @@
 	//---------------------------------
 	if( $_POST["q"] == "upload" ){
 		
-		if( !file_exists("../uploads/thumbs/")){
-			exit("No thumbs folder");
+		if( !file_exists("../uploads")){
+			mkdir("../uploads/");
+		}
+		if( !file_exists("../uploads/thumbs")){
+			mkdir("../uploads/thumbs");
 		}
 		$description = cleanString( $_POST['description'] );
 		$folder_id = cleanString( $_POST['folder_id'] );

@@ -4,12 +4,58 @@
     	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		<meta name="viewport" content="width=device-width,initial-scale=1">
 		
-        <link rel="stylesheet" type="text/css" href="css/jquery-ui.css" /> 
+        <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.17/themes/redmond/jquery-ui.css" /> 
 		<link rel="stylesheet" type="text/css" href="css/normalize.css" />
-		<link rel="stylesheet" type="text/css" href="css/style.css" />
-
-		<script type="text/javascript" src="js/jquery.min.js"></script> 
-		<script type="text/javascript" src="js/jquery-ui.min.js"></script>
+		<style>
+			.box{
+				border:1px dotted grey;
+				padding:20px;
+				margin:20px;
+				margin-bottom:10px;
+			}
+			.folders_list{
+				list-style-type: none; 
+				margin: 0; 
+				padding: 0;
+			}
+			.folders_list li{
+				border:1px solid #ADD6A3;
+				background-color:#F3F8F1;
+				padding:10px;
+				width:80px;
+				height:80px;
+				
+				list-style-image:none;
+				margin:5px;
+				float:left;
+				overflow:hidden;
+				
+				display:inline;
+			}
+			.placeholder_box{
+				border:1px solid orange;
+			}
+			#image_field{
+				border:1px dotted grey;
+				background-color:#F4F4F4
+			}
+			.left{
+				floaT:left;
+			}
+			.right{
+				float:right;
+			}
+			.clear{
+				clear: both;
+				display: block;
+				visibility: hidden;
+				line-height: 0;
+				height: 0;
+			}
+		</style>
+        
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
         <script type="text/javascript" src="js/jquery.jeditable.js"></script> 
 		
        

@@ -1,0 +1,50 @@
+.box {
+    border: 1px dotted grey;
+    padding: 20px;
+    margin: 20px;
+    margin-bottom: 10px;
+}
+
+.folders_list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.folders_list li {
+    border: 1px solid #ADD6A3;
+    background-color: #F3F8F1;
+    padding: 10px;
+    width: 80px;
+    height: 80px;
+    list-style-image: none;
+    margin: 5px;
+    float: left;
+    overflow: hidden;
+    display: inline;
+}
+
+.placeholder_box {
+    border: 1px solid orange;
+}
+
+#image_field {
+    border: 1px dotted grey;
+    background-color: #F4F4F4
+}
+
+.left {
+    floaT: left;
+}
+
+.right {
+    float: right;
+}
+
+.clear {
+    clear: both;
+    display: block;
+    visibility: hidden;
+    line-height: 0;
+    height: 0;
+}

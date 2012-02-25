@@ -12,9 +12,7 @@
 		<script type="text/javascript" src="js/jquery-ui.min.js"></script>
         <script type="text/javascript" src="js/jquery.jeditable.js"></script> 
 		
-       
-        
-		<script type="text/javascript" src="js/modernizr-2.5.1.js"></script>
+       	<script type="text/javascript" src="js/modernizr-2.5.1.js"></script>
         <script src="js/jquery.ba-hashchange.min.js"></script>
 		<script src="js/jsrender.js"></script>
         
@@ -29,12 +27,14 @@
 				
 				$.template( "folderItem", 
 						   "<li class='folder item' id='{{=id}}'>" + 
-						   "<a href='#images-{{=id}}'>Go to folder</a><br><br>" +   
+						   "<a href='#images-{{=id}}-{{=name}}'>Go to folder</a><br><br>" +   
 						   "<span class='edit name' id='{{=id}}'>{{=name}}</span><br><br>" +   
 						   "<a class='right' href='api/?q=remove_folder&id={{=id}}'>Poista kansio</a>" +
 						   "<div class='clear'></div></li>" 
 						   );
-
+						   
+				$.template( "folderHeader", "<span class='edit name' id='{{=id}}'>{{=name}}</span>" );
+						   
 				addHashChangeListener()
 				initView()
 			
@@ -58,16 +58,14 @@
 				}
 			}
 			showFoldersView = function(){
-				alert("show folders")
 				initFolders()
 			}
 			showImagesView = function(){
-				alert("show images")
 				showImages()
 			}
 			
 			resetViews = function(){
-				$(".images.box").html("")
+				$(".images.box").html("<div class='folder_header'></div>")
 				$(".folders_list").html("")
 			}
 			/*------------------------------*/
@@ -87,6 +85,7 @@
 			/*------------------------------*/
 			showImages = function(){
 				$(".images_data").load("xml/images.xml?random=" + Math.random(), onImagesLoaded )
+				showFolderHead()
 			}
 			onImagesLoaded = function(){
 				$('.image[folder_id="1328459463"]').each( onImageLoad )
@@ -97,9 +96,15 @@
 				var id = $(item).attr("id")
 				$(".images.box").append( "<img src='uploads/thumbs/"+ filename + ".jpg' /><a href='api/?q=remove_image&id=" +id+ "'>Poista</a>")
 			}
+			
 			/*-----------------------------*/
 			/* Folders                     */
 			/*-----------------------------*/
+			showFolderHead = function(){
+				var data = [{  name:'kansion nimi', id:'2'  }]
+				$(".folder_header").append( $.render( data, "folderHeader" ) )
+				
+			}
 			initFolders = function(){
 				$(".folders_data").load("xml/folders.xml?random=" + Math.random(), onFoldersLoaded )	
 			}
@@ -191,9 +196,7 @@
            <div class="clear"></div>
         </div>
         <div class="clear"></div>
-        <div class="images box">
-        
-        </div>
+        <div class="images box"></div>
         
         <!---------------------------------->
         <!-- DATA -------------------------->

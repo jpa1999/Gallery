@@ -23,7 +23,11 @@
     overflow: hidden;
     display: inline;
 }
-
+.folder_header{
+	
+	padding:20px;
+	background.color:red;
+}
 .placeholder_box {
     border: 1px solid orange;
 }

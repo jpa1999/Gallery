@@ -101,8 +101,9 @@
 			/* Folders                     */
 			/*-----------------------------*/
 			showFolderHead = function(){
-				var data = [{  name:'kansion nimi', id:'2'  }]
+				var data = [{  name:hash_parameter, id:hash_status  }]
 				$(".folder_header").append( $.render( data, "folderHeader" ) )
+				$('.folder_header .edit.name').editable('api/',{ submitdata : {q: "edit",cat:"folder",attr:"name"} });
 				
 			}
 			initFolders = function(){

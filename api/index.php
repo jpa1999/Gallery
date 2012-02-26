@@ -3,13 +3,14 @@
 	
 	require_once "class.upload_0.30.php";
 	require_once "folders.class.php";
+	require_once "images.class.php";
 	
 	$images_file_path = '../xml/images.xml';
 	$has_images_file = file_exists( $images_file_path );
 	
 		
 	$folders = new Folders( "../xml/folders.xml" );
-	
+	$images = new Images("../xml/images.xml");
 	//---------------------------------
 	// FOLDERS
 	//---------------------------------
@@ -49,95 +50,16 @@
 	// removeIMAGES
 	//---------------------------------
 	if( $_GET["q"] == "remove_image" ){
-		
+			
 		$id = cleanString( $_GET["id"] );
-		$xml = loadFileToSimpleXML( "images" );
-		
-		$result = $xml->xpath( "div[@id='" .$id. "']");
-			
-		if( count( $result ) > 0  ){
-			$dom=dom_import_simplexml( $result[0] );
-        	$dom->parentNode->removeChild($dom);
-		}else{
-			echo "No such node";
-		}
-			
-		$xml->asXML( $images_file );
-		
-		forward("");
+		$images->remove( $id );
 	}
 	//---------------------------------
 	// UPLOAD IMAGES
 	//---------------------------------
 	if( $_POST["q"] == "upload" ){
 		
-		if( !file_exists("../uploads")){
-			mkdir("../uploads/");
-		}
-		if( !file_exists("../uploads/thumbs")){
-			mkdir("../uploads/thumbs");
-		}
-		$description = cleanString( $_POST['description'] );
-		$folder_id = cleanString( $_POST['folder_id'] );
-		
-		$foo = new Upload( $_FILES['image_field'] );
-		if ($foo->uploaded) {
-			 
-			//SETTINGS
-		  	
-		  	$foo->image_convert = "jpg";
-		  	$foo->image_unsharp = true;
-			$foo->jpeg_quality = 90;
-			
-			 // DO THUMB
-			 // save uploaded image with no changes
-		 	$foo->file_new_name_body = 'thumb';
-			$foo->image_resize = true;
-			$foo->image_x = 180;
-			$foo->image_ratio_y = true;
-			$foo->Process('../uploads/thumbs/');
-			$thumb_file_name = $foo->file_dst_name_body;
-			// DO MAIN IMAGE
-			$foo->file_new_name_body = 'image';
-			$foo->image_resize = true;
-			$foo->image_x = 600;
-			$foo->image_ratio_y = true;
-			$foo->Process('../uploads/images/');
-			$image_file_name = $foo->file_dst_name_body;
-			
-		  	if($foo->processed){ 
-			
-				$xml = loadFileToSimpleXML( "images" );
-				
-				$xml = simplexml_load_file('../xml/images.xml');
-				$image = $xml->addChild('div');
-				$image->addAttribute("class","image");
-				$image->addAttribute("folder_id",$folder_id);
-				$image->addAttribute("id",  time( true ) );
-					
-				$filename_element = $image->addChild("div", $thumb_file_name);
-				$filename_element ->addAttribute("class","thumbname");
-					
-				$filename_element = $image->addChild("div", $image_file_name);
-				$filename_element ->addAttribute("class","filename");
-					
-				$description_element = $image->addChild("div", $description);
-				$description_element ->addAttribute("class","description");
-					
-					
-					
-				file_put_contents( $images_file, $xml->asXML() );
-				
-				$foo->Clean(); 
-				
-			}else{ 
-				echo 'error : ' . $foo->error; 
-			}
-
-		}
-		
-		forward("");
-		
+		$images->upload();
 	}
 	
 	function processUpload(){

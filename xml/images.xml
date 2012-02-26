@@ -4,4 +4,4 @@
 		<div class="thumbname">thumb</div>
 		<div class="filename">image</div><div class="description"/>
 	</div>
-	<div class="image" folder_id="1328459463"><div class="thumbname">thumb_1</div><div class="filename">image_1</div><div class="description"/></div></div>
+	<div class="image" folder_id="1328459463"><div class="thumbname">thumb_1</div><div class="filename">image_1</div><div class="description"/></div><div class="image" folder_id="0" id="1330176293"><div class="thumbname">thumb_2</div><div class="filename">image_2</div><div class="description"/></div><div class="image" folder_id="1328967101" id="1330176393"><div class="thumbname">thumb_3</div><div class="filename">image_3</div><div class="description">abcdedfghijkl</div></div></div>

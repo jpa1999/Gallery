@@ -4,7 +4,12 @@
     margin: 20px;
     margin-bottom: 10px;
 }
-
+button.admin.show{
+	margin:20px;
+}
+.admin.box{
+	display:none;
+}
 .folders_list {
     list-style-type: none;
     margin: 0;

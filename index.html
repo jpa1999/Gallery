@@ -1,213 +1,68 @@
 <html>
 	<head>
-    	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
-    	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		<meta name="viewport" content="width=device-width,initial-scale=1">
 		
-        <link rel="stylesheet" type="text/css" href="css/jquery-ui.css" /> 
+		<link rel="stylesheet" type="text/css" href="css/jquery-ui.css" />
 		<link rel="stylesheet" type="text/css" href="css/normalize.css" />
 		<link rel="stylesheet" type="text/css" href="css/style.css" />
-
-		<script type="text/javascript" src="js/jquery.min.js"></script> 
+		
+		
+		<script type="text/javascript" src="js/jquery.min.js"></script>
 		<script type="text/javascript" src="js/jquery-ui.min.js"></script>
-        <script type="text/javascript" src="js/jquery.jeditable.js"></script> 
-		
-       	<script type="text/javascript" src="js/modernizr-2.5.1.js"></script>
-        <script src="js/jquery.ba-hashchange.min.js"></script>
+		<script type="text/javascript" src="js/jquery.jeditable.js"></script>
+		<script type="text/javascript" src="js/modernizr-2.5.1.js"></script>
+		<script src="js/jquery.ba-hashchange.min.js"></script>
 		<script src="js/jsrender.js"></script>
-        
-        <script>
+		<script src="js/main.js"></script>
 		
-			var start_index
-			var end_index
-			
-			$(document).ready( documentReady )
-			
-			function documentReady(){
-				
-				$.template( "folderItem", 
-						   "<li class='folder item' id='{{=id}}'>" + 
-						   "<a href='#images-{{=id}}-{{=name}}'>Go to folder</a><br><br>" +   
-						   "<span class='edit name' id='{{=id}}'>{{=name}}</span><br><br>" +   
-						   "<a class='right' href='api/?q=remove_folder&id={{=id}}'>Poista kansio</a>" +
-						   "<div class='clear'></div></li>" 
-						   );
-						   
-				$.template( "folderHeader", "<span class='edit name' id='{{=id}}'>{{=name}}</span>" );
-						   
-				addHashChangeListener()
-				initView()
-			
-			
-				
-			}
-			
-			initView = function(){
-				processHash()
-				changeViewByHash()
-			}
-			changeViewByHash = function(){
-				
-				resetViews()
-				
-				if( hash_target == "folders" || hash_target == ""  ){
-					showFoldersView()	
-				}
-				if( hash_target == "images" ){
-					showImagesView()	
-				}
-			}
-			showFoldersView = function(){
-				initFolders()
-			}
-			showImagesView = function(){
-				showImages()
-			}
-			
-			resetViews = function(){
-				$(".images.box").html("<div class='folder_header'></div>")
-				$(".folders_list").html("")
-			}
-			/*------------------------------*/
-			/* Hash change                  */
-			/*------------------------------*/
-			addHashChangeListener = function(){
-				var parent = this
-				jQuery(window).hashchange( function(){ parent.onHashChange() }  );	
-			}
-			onHashChange = function(){
-				processHash()
-				changeViewByHash()
-				//alert( "asdasd" + hash_status +" / "+ hash_target +" / "+ hash_parameter )
-			}
-			/*------------------------------*/
-			/* Images                 */
-			/*------------------------------*/
-			showImages = function(){
-				$(".images_data").load("xml/images.xml?random=" + Math.random(), onImagesLoaded )
-				showFolderHead()
-			}
-			onImagesLoaded = function(){
-				$('.image[folder_id="1328459463"]').each( onImageLoad )
-			}
-			
-			onImageLoad = function( index, item ){ 
-				var filename = $(item).find(".thumbname").html()
-				var id = $(item).attr("id")
-				$(".images.box").append( "<img src='uploads/thumbs/"+ filename + ".jpg' /><a href='api/?q=remove_image&id=" +id+ "'>Poista</a>")
-			}
-			
-			/*-----------------------------*/
-			/* Folders                     */
-			/*-----------------------------*/
-			showFolderHead = function(){
-				var data = [{  name:hash_parameter, id:hash_status  }]
-				$(".folder_header").append( $.render( data, "folderHeader" ) )
-				$('.folder_header .edit.name').editable('api/',{ submitdata : {q: "edit",cat:"folder",attr:"name"} });
-				
-			}
-			initFolders = function(){
-				$(".folders_data").load("xml/folders.xml?random=" + Math.random(), onFoldersLoaded )	
-			}
-			onFoldersLoaded = function( event ){
-				
-				$(".folder").each( onFolder )
-				$(".folders_list").sortable({
-												start: function(event, ui) { start_index = ui.item.index() },
-												update: function(event, ui) { end_index = ui.item.index(); onIndexChange() },
-												cursor: 'move'
-											
-											});
-				$( ".folders_list" ).disableSelection();
-				
-				//Edit name
-				$('.folder .edit.name').editable('api/',{ submitdata : {q: "edit",cat:"folder",attr:"name"} });
-			}
-			
-			onIndexChange = function (){
-				$.get("api/?q=move_folder&start=" + start_index + "&end=" + end_index, function(data) {})
-			}
-			
-			onFolder = function( index, element ){
-				
-				//var name = $( element ).find(".name").html()
-				//var id = 	$( element ).attr("id")
-				
-				var data = [{  name:$( element ).find(".name").html(), id:$( element ).attr("id")  }]
-				
-				$(".folder_select").append( "<option value=" + data[0].id + ">" + data[0].name + "</option>")
-				$(".folders_list").append( $.render( data, "folderItem" ) )
-
-			}
-			
-			/*---------------------------------*/
-			/* Hash                            */
-			/*---------------------------------*/
-			function processHash(){
-				if( window.location.hash != false ){
-					hash = window.location.hash.substring(  1 )
-					hash_array 		= hash.split("-")
-					hash_target 	= hash_array[0]
-					hash_status 	= hash_array[1]
-					hash_parameter 	= hash_array[2]	
-				}else{
-					hash_array=null
-					hash_target 	= ""
-					hash_status 	= ""
-					hash_parameter 	= ""	
-				}
-			}
-			/*---------------------------------*/
-			/* Hash                            */
-			/*---------------------------------*/
-			
-		</script>
-    </head>
+	</head>
 	<body>
-    
-       <div class="add_images box">
-       <form enctype="multipart/form-data" method="post" action="api/index.php">
-       		<input id="image_field" type="file" size="32" name="image_field" value="">
-			<input type="hidden" name="q" value="upload" />
-			<input type="submit" name="Submit" value="upload">
-            <br /><br /><br />
-            <select class="folder_select" name="folder_id">
-            	<option value="0">Valitse kansio:</option>
-            </select>
-            Kuvateksti:
-            <input type="text" name="description"></select>
-            
-		</form>
-        </div>
-        <div class="folders_admin box">
-        	<div class="folders container">
-            	<form action="api" method="get">
-                    Lisää kuvakansio: 
-                    <input type="text" name="name" placeholder="Kansion nimi"/>
-                    <input type="text" name="description" placeholder="Kansion kuvaus"></input>
-                    <input type="hidden" name="q" value="add_folder" />
-                    
-                    <button type="submit">Lisää uusi kansio</button>
-                </form>
-            </div>
-           	<div class="folders box">
-            	<ul class="folders_list"> </ul>
-                <div class="clear"></div>
-           </div>
-           <div class="clear"></div>
-        </div>
-        <div class="clear"></div>
-        <div class="images box"></div>
-        
-        <!---------------------------------->
-        <!-- DATA -------------------------->
-        <!---------------------------------->
-        
-        <div class="folders_data">
-        
-        </div>
-        <div class="images_data">
-        	
-        </div>
-    </body>
+		<button class="admin show">Näytä Admin työkalut</button>
+		<div class="add_images admin box">
+			<form enctype="multipart/form-data" method="post" action="api/index.php">
+				<input id="image_field" type="file" size="32" name="image_field" value="">
+				<input type="hidden" name="q" value="upload" />
+				<input type="submit" name="Submit" value="upload">
+				<br />
+				<br />
+				<br />
+				<select class="folder_select" name="folder_id">
+					<option value="0">Valitse kansio:</option>
+				</select>
+				Kuvateksti:
+				<input type="text" name="description">
+				</select>
+			</form>
+		</div>
+		<div class="folders_admin admin box">
+			<div class="folders container">
+				<form action="api" method="get">
+					Lisää kuvakansio:
+					<input type="text" name="name" placeholder="Kansion nimi"/>
+					<input type="text" name="description" placeholder="Kansion kuvaus">
+					</input>
+					<input type="hidden" name="q" value="add_folder" />
+					<button type="submit">
+						Lisää uusi kansio
+					</button>
+				</form>
+			</div>
+	</div>
+		<div>	
+			<div class="folders box">
+				<ul class="folders_list"></ul>
+				<div class="clear"></div>
+			</div>
+			<div class="clear"></div>
+		</div>
+		<div class="clear"></div>
+		<div class="images box"></div>
+		<!---------------------------------->
+		<!-- DATA -------------------------->
+		<!---------------------------------->
+		<div class="folders_data"></div>
+		<div class="images_data"></div>
+	</body>
 </html>

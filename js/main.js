@@ -5,10 +5,21 @@ $(document).ready(documentReady)
 
 function documentReady() {
 
-	$.template("folderItem", "<li class='folder item' id='{{=id}}'>" + "<a href='#images-{{=id}}-{{=name}}'>Go to folder</a><br><br>" + "<span class='edit name' id='{{=id}}'>{{=name}}</span><br><br>" + "<a class='right' href='api/?q=remove_folder&id={{=id}}'>Poista kansio</a>" + "<div class='clear'></div></li>");
+	$.template("folderItem", 
+	
+	"<li class='folder item' id='{{=id}}'>" 
+	+ "<a href='#images-{{=id}}-{{=name}}'>Go to folder</a><br><br>" 
+	+ "<span class='edit name' id='{{=id}}'>{{=name}}</span><br><br>" 
+	+ "<a class='right' href='api/?q=remove_folder&id={{=id}}'>Poista kansio</a>" 
+	+ "<div class='clear'></div></li>");
 
-	$.template("folderHeader", "<span class='edit name' id='{{=id}}'>{{=name}}</span>");
+	$.template("folderHeader", "<span class='edit name' id='{{=id}}'>{{=name}}</span>")
 
+	$.template("imageListItem","<li class='image item' id='{{=id}}'>"
+	+"<img src='uploads/thumbs/{{=filename}}.jpg' />"
+	+"<div><a href='api/?q=remove_image&id={{=id}}'>Poista</a></div>"
+	+"</li>")
+	
 	addHashChangeListener()
 	initView()
 	initButtons()
@@ -36,7 +47,7 @@ showImagesView = function() {
 	showImages()
 }
 resetViews = function() {
-	$(".images.box").html("<div class='folder_header'></div>")
+	$(".images.box").html( "<div class='folder_header'></div><ul class='images_list'></ul><div class='clear'></div>" )
 	$(".folders_list").html("")
 }
 
@@ -65,12 +76,32 @@ showImages = function() {
 	showFolderHead()
 }
 onImagesLoaded = function() {
-	$('.image[folder_id="1328459463"]').each(onImageLoad)
+	$('.image[folder_id="' + hash_status + '"]').each(onImageLoad)
+	
+	$(".images_list").sortable({
+		start : function(event, ui) {
+			start_index = ui.item.index()
+		},
+		update : function(event, ui) {
+			end_index = ui.item.index();
+			onImageIndexChange()
+		},
+		cursor : 'move'
+
+	});
+	$(".images_list").disableSelection();
+
 }
 onImageLoad = function(index, item) {
 	var filename = $(item).find(".thumbname").html()
 	var id = $(item).attr("id")
-	$(".images.box").append("<img src='uploads/thumbs/" + filename + ".jpg' /><a href='api/?q=remove_image&id=" + id + "'>Poista</a>")
+	
+	var data = [{
+		filename : filename,
+		id : id
+	}]
+
+	$(".images_list").append( $.render(data, "imageListItem") )
 }
 /*-----------------------------*/
 /* Folders                     */

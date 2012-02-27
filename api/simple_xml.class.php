@@ -36,12 +36,17 @@
 			}else{
 				echo "No such node";
 			}
+			
+			echo "S EDIT";
+			$this->printR();
 		}
 		
 		public function printR(){
 			print_r( $this->xml->asXML() );
 		}
 		public function save(){
+			
+			echo "Saving!: " . $this->printR();
 			$this->xml->asXML( $this->file_path );	
 		}
 		

@@ -16,7 +16,7 @@ button.admin.show{
     padding: 0;
 }
 
-.folders_list li {
+.folders_list li, .images_list li {
     border: 1px solid #ADD6A3;
     background-color: #F3F8F1;
     padding: 10px;
@@ -42,6 +42,10 @@ button.admin.show{
     background-color: #F4F4F4
 }
 
+.images_data{
+	
+	display:none;
+}
 .left {
     floaT: left;
 }

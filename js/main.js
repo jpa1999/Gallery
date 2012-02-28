@@ -41,10 +41,15 @@ changeViewByHash = function() {
 	}
 }
 showFoldersView = function() {
+	on_folders = true
+	on_images = false
 	initFolders()
 }
 showImagesView = function() {
-	showImages()
+	on_images = true;
+	on_folders = false;
+	initFolders()
+	initImages()
 }
 resetViews = function() {
 	$(".images.box").html( "<div class='folder_header'></div><ul class='images_list'></ul><div class='clear'></div>" )
@@ -71,11 +76,22 @@ onHashChange = function() {
 /*------------------------------*/
 /* Images                 */
 /*------------------------------*/
-showImages = function() {
-	$(".images_data").load("xml/images.xml?random=" + Math.random(), onImagesLoaded)
-	showFolderHead()
+initImages = function() {
+	$(".images_data").load("xml/images.xml?random=" + Math.random(), showImages)
+}
+
+showImages = function(){
+	alert("show images" + folders_loaded)
+	if( folders_loaded ){
+		onImagesLoaded()
+	}
 }
 onImagesLoaded = function() {
+	
+	alert("onImages loaded")
+	
+	showFolderHead()
+	
 	$('.image[folder_id="' + hash_status + '"]').each(onImageLoad)
 	
 	$(".images_list").sortable({
@@ -122,10 +138,28 @@ showFolderHead = function() {
 
 }
 initFolders = function() {
-	$(".folders_data").load("xml/folders.xml?random=" + Math.random(), onFoldersLoaded)
+	folders_loaded = false
+	var parent = this
+	$(".folders_data").load("xml/folders.xml?random=" + Math.random(), function(){ parent.onFoldersDataLoaded() }  )
 }
-onFoldersLoaded = function(event) {
 
+onFoldersDataLoaded = function(){
+	
+	alert("folders data loaded: on folders: " + on_folders)
+	
+	folders_loaded = true
+	
+	if( on_folders ){
+		showFolders()
+	}else{
+		showImages()
+	}
+	
+}
+showFolders = function() {
+
+	alert("showFolders")
+	
 	$(".folder").each(onFolder)
 	$(".folders_list").sortable({
 		start : function(event, ui) {

@@ -1,5 +1,6 @@
 var start_index
 var end_index
+var folders_loaded = false
 
 $(document).ready(documentReady)
 
@@ -30,7 +31,7 @@ initView = function() {
 	changeViewByHash()
 }
 changeViewByHash = function() {
-
+	
 	resetViews()
 
 	if(hash_target == "folders" || hash_target == "") {
@@ -46,6 +47,7 @@ showFoldersView = function() {
 	initFolders()
 }
 showImagesView = function() {
+	
 	on_images = true;
 	on_folders = false;
 	initFolders()
@@ -77,18 +79,21 @@ onHashChange = function() {
 /* Images                 */
 /*------------------------------*/
 initImages = function() {
-	$(".images_data").load("xml/images.xml?random=" + Math.random(), showImages)
+	images_loaded = false
+	parent = this
+	$(".images_data").load("xml/images.xml?random=" + Math.random(), function(){ parent.onImagesDataLoaded() } )
 }
-
+onImagesDataLoaded = function(){
+	images_loaded = true
+	showImages()
+}
 showImages = function(){
-	alert("show images" + folders_loaded)
-	if( folders_loaded ){
+	if( folders_loaded && images_loaded ){
 		onImagesLoaded()
 	}
 }
 onImagesLoaded = function() {
 	
-	alert("onImages loaded")
 	
 	showFolderHead()
 	
@@ -123,6 +128,9 @@ onImageLoad = function(index, item) {
 /* Folders                     */
 /*-----------------------------*/
 showFolderHead = function() {
+	
+	alert("show folder head")
+	
 	var data = [{
 		name : hash_parameter,
 		id : hash_status
@@ -133,7 +141,9 @@ showFolderHead = function() {
 			q : "edit",
 			cat : "folder",
 			attr : "name"
-		}
+		},
+		indicator : "Saving...",
+		complete : function (xhr, textStatus){ alert("kukkuu") }
 	});
 
 }
@@ -144,8 +154,6 @@ initFolders = function() {
 }
 
 onFoldersDataLoaded = function(){
-	
-	alert("folders data loaded: on folders: " + on_folders)
 	
 	folders_loaded = true
 	
@@ -158,8 +166,6 @@ onFoldersDataLoaded = function(){
 }
 showFolders = function() {
 
-	alert("showFolders")
-	
 	$(".folder").each(onFolder)
 	$(".folders_list").sortable({
 		start : function(event, ui) {
@@ -174,14 +180,6 @@ showFolders = function() {
 	});
 	$(".folders_list").disableSelection();
 
-	//Edit name
-	$('.folder .edit.name').editable('api/', {
-		submitdata : {
-			q : "edit",
-			cat : "folder",
-			attr : "name"
-		}
-	});
 }
 onIndexChange = function() {
 	$.get("api/?q=move_folder&start=" + start_index + "&end=" + end_index, function(data) {

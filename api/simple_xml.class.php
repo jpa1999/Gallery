@@ -37,8 +37,8 @@
 				echo "No such node";
 			}
 			
-			echo "S EDIT";
-			$this->printR();
+			//echo "S EDIT";
+			//$this->printR();
 		}
 		
 		public function printR(){

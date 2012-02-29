@@ -29,9 +29,18 @@ button.admin.show{
     display: inline;
 }
 .folder_header{
-	
+	width:500px;
 	padding:20px;
-	background.color:red;
+	background-color:blue;
+}
+.edit.name{
+	padding:0px;
+	background-color: red;
+	
+}
+.edit.name input{
+	width:500px;
+	padding:20px;
 }
 .placeholder_box {
     border: 1px solid orange;

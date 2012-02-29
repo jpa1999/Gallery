@@ -14,7 +14,7 @@ function documentReady() {
 	+ "<a class='right' href='api/?q=remove_folder&id={{=id}}'>Poista kansio</a>" 
 	+ "<div class='clear'></div></li>");
 
-	$.template("folderHeader", "<span class='edit name' id='{{=id}}'>{{=name}}</span>")
+	$.template("folderHeader", "<div class='edit name' id='{{=id}}'>{{=name}}</div>")
 
 	$.template("imageListItem","<li class='image item' id='{{=id}}'>"
 	+"<img src='uploads/thumbs/{{=filename}}.jpg' />"
@@ -132,7 +132,7 @@ showFolderHead = function() {
 	alert("show folder head")
 	
 	var data = [{
-		name : hash_parameter,
+		name : $(".folders_data .folders #" + hash_status + " .name" ).html(),
 		id : hash_status
 	}]
 	$(".folder_header").append($.render(data, "folderHeader"))

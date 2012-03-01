@@ -52,7 +52,7 @@ class Images{
 	}
 	public function move( $start, $end ){
 		
-		$nodes = $this->xml->xpath( "div[@class='folder']");
+		$nodes = $this->xml->xpath( "div[@class='image'][@folder_id='1328459463']");
 		$nodes = $this->xml->moveArrayItem( $nodes, $start, $end );
 		$this->xml = simplexml_import_dom( $this->foldersArrayToXML($nodes) );
 		$this->save();

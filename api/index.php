@@ -49,6 +49,13 @@
 	//---------------------------------
 	// removeIMAGES
 	//---------------------------------
+	if( $_GET["q"] == "move_image" ){
+		$folder_id = (int) cleanString( $_GET["folder_id"] ) ;
+		$start = 	(int) cleanString( $_GET["start"] ) ;
+		$end = 		(int) cleanString( $_GET["end"] )  ;
+		$images->move( $start,$end, $folder_id );
+	}
+	
 	if( $_GET["q"] == "remove_image" ){
 			
 		$id = cleanString( $_GET["id"] );
@@ -58,7 +65,6 @@
 	// UPLOAD IMAGES
 	//---------------------------------
 	if( $_POST["q"] == "upload" ){
-		
 		$images->upload();
 	}
 	

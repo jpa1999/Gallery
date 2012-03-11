@@ -113,6 +113,9 @@ onImagesLoaded = function() {
 	$(".images_list").disableSelection();
 
 }
+onImageIndexChange = function() {
+	$.get("api/?q=move_image&folder_id=" + hash_status + "&start=" + start_index + "&end=" + end_index, function(data) { alert( data) })
+}
 onImageLoad = function(index, item) {
 	var filename = $(item).find(".thumbname").html()
 	var id = $(item).attr("id")
@@ -128,8 +131,6 @@ onImageLoad = function(index, item) {
 /* Folders                     */
 /*-----------------------------*/
 showFolderHead = function() {
-	
-	alert("show folder head")
 	
 	var data = [{
 		name : $(".folders_data .folders #" + hash_status + " .name" ).html(),
@@ -173,7 +174,7 @@ showFolders = function() {
 		},
 		update : function(event, ui) {
 			end_index = ui.item.index();
-			onIndexChange()
+			onFolderIndexChange()
 		},
 		cursor : 'move'
 
@@ -181,7 +182,7 @@ showFolders = function() {
 	$(".folders_list").disableSelection();
 
 }
-onIndexChange = function() {
+onFolderIndexChange = function() {
 	$.get("api/?q=move_folder&start=" + start_index + "&end=" + end_index, function(data) {
 	})
 }

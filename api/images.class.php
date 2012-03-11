@@ -50,11 +50,23 @@ class Images{
 		//forward("");	
 		
 	}
-	public function move( $start, $end ){
+	public function move( $start, $end, $folder_id ){
 		
-		$nodes = $this->xml->xpath( "div[@class='image'][@folder_id='1328459463']");
-		$nodes = $this->xml->moveArrayItem( $nodes, $start, $end );
-		$this->xml = simplexml_import_dom( $this->foldersArrayToXML($nodes) );
+		echo print_r( $this->simple_xml->xml ) ;
+		
+		echo"###################################";
+		//Split folder images and other images to two arrays
+		$nodes = $this->xml->xpath( "div[@class='image'][@folder_id='" . $folder_id . "']");
+		$other_nodes = $this->xml->xpath( "div[@class='image'][@folder_id!='" . $folder_id . "']");
+		//Move image
+		$nodes = $this->simple_xml->moveArrayItem( $nodes, $start, $end );
+		//Combine arrays back together
+		$combined_array = array_merge($nodes, $other_nodes );
+		//Convert to xml
+		$this->xml = simplexml_import_dom( $this->foldersArrayToXML( $combined_array ) );
+		
+		$this->simple_xml->xml = $this->xml;
+		echo print_r( $this->simple_xml->xml ) ;
 		$this->save();
 	}
 	
@@ -100,14 +112,20 @@ class Images{
 		$foo = new Upload( $_FILES['image_field'] );
 		if ($foo->uploaded) {
 			 
+			 
+			 // BACKUP ORIGINAL
+			$foo->Process('../uploads/originals/');
+			 
 			//SETTINGS
 		  	
 		  	$foo->image_convert = "jpg";
 		  	$foo->image_unsharp = true;
 			$foo->jpeg_quality = 90;
 			
-			 // DO THUMB
-			 // save uploaded image with no changes
+			
+			
+			$thumb_file_name = $foo->file_dst_name_body;
+			// DO THUMB
 		 	$foo->file_new_name_body = 'thumb';
 			$foo->image_resize = true;
 			$foo->image_x = 180;

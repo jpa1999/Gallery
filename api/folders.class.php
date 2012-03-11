@@ -51,8 +51,11 @@ class Folders{
 	public function move( $start, $end ){
 		
 		$nodes = $this->xml->xpath( "div[@class='folder']");
-		$nodes = $this->xml->moveArrayItem( $nodes, $start, $end );
+		$nodes = $this->simple_xml->moveArrayItem( $nodes, $start, $end );
 		$this->xml = simplexml_import_dom( $this->foldersArrayToXML($nodes) );
+		$this->simple_xml->xml = $this->xml;
+		
+		
 		$this->save();
 	}
 	

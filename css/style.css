@@ -17,16 +17,23 @@ button.admin.show{
 }
 
 .folders_list li, .images_list li {
-    border: 1px solid #ADD6A3;
+    /*border: 1px solid #ADD6A3;*/
     background-color: #F3F8F1;
     padding: 10px;
-    width: 80px;
-    height: 80px;
+    width: 167px;
+    height: 120px;
     list-style-image: none;
     margin: 5px;
     float: left;
     overflow: hidden;
     display: inline;
+}
+.folders_list li a.thumb{
+	display:block;
+	background-color:grey;
+	width: 167px;
+    height: 111px;	
+    clear:both;
 }
 .folder_header{
 	width:500px;
@@ -35,7 +42,9 @@ button.admin.show{
 }
 .edit.name{
 	padding:0px;
-	background-color: red;
+	margin-top:5px;
+	float:left;
+	font-size:12px;
 	
 }
 .edit.name input{

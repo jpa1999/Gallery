@@ -2,6 +2,8 @@ var start_index
 var end_index
 var folders_loaded = false
 
+var loaded_images = 0
+
 $(document).ready(documentReady)
 
 function documentReady() {
@@ -9,15 +11,15 @@ function documentReady() {
 	$.template("folderItem", 
 	
 	"<li class='folder item' id='{{=id}}'>" 
-	+ "<a href='#images-{{=id}}-{{=name}}'>Go to folder</a><br><br>" 
-	+ "<span class='edit name' id='{{=id}}'>{{=name}}</span><br><br>" 
-	+ "<a class='right' href='api/?q=remove_folder&id={{=id}}'>Poista kansio</a>" 
+	+ "<a class='thumb' href='#images-{{=id}}-{{=name}}'></a>" 
+	+ "<div class='clear'></div>"
+	+ "<div class='edit name' id='{{=id}}'>{{=name}}</div>" 
 	+ "<div class='clear'></div></li>");
 
-	$.template("folderHeader", "<div class='edit name' id='{{=id}}'>{{=name}}</div>")
+	$.template("folderHeader", "<div class='edit name' id='{{=id}}'>{{=name}}</div><div><a class='right' href='api/?q=remove_folder&id={{=id}}'>Poista</a></div>")
 
 	$.template("imageListItem","<li class='image item' id='{{=id}}'>"
-	+"<img src='uploads/thumbs/{{=filename}}.jpg' />"
+	+"<a class='image_item' href='uploads/images/{{=filename}}.jpg'><img src='uploads/thumbs/{{=thumbname}}.jpg' /></a>"
 	+"<div><a href='api/?q=remove_image&id={{=id}}'>Poista</a></div>"
 	+"</li>")
 	
@@ -52,6 +54,7 @@ showImagesView = function() {
 	on_folders = false;
 	initFolders()
 	initImages()
+	
 }
 resetViews = function() {
 	$(".images.box").html( "<div class='folder_header'></div><ul class='images_list'></ul><div class='clear'></div>" )
@@ -111,21 +114,29 @@ onImagesLoaded = function() {
 
 	});
 	$(".images_list").disableSelection();
+	
+	$('a.image_item').lightBox();
 
 }
 onImageIndexChange = function() {
 	$.get("api/?q=move_image&folder_id=" + hash_status + "&start=" + start_index + "&end=" + end_index, function(data) { alert( data) })
 }
 onImageLoad = function(index, item) {
-	var filename = $(item).find(".thumbname").html()
+	var thumbname = $(item).find(".thumbname").html()
+	var filename = $(item).find(".filename").html()
+
 	var id = $(item).attr("id")
 	
 	var data = [{
+		thumbname : thumbname,
 		filename : filename,
 		id : id
 	}]
 
 	$(".images_list").append( $.render(data, "imageListItem") )
+	
+	
+
 }
 /*-----------------------------*/
 /* Folders                     */

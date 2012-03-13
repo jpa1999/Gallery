@@ -82,14 +82,13 @@
 		if( empty($username)  		){ forward( "#etusivu-error-no_login_username");  return; }
 		if( empty($password)  		){ forward( "#etusivu-error-no_login_password");  return; }
 		
-		if( $username=="Rakennustieto" && $password== md5( "Visio2012!" ) ){
-			initUserSession( -1,"Pääkäyttäjä" );
-			forward("#etusivu-login-ready");
+		if( $username=="pot" && $password== md5( "potGallery" ) ){
+			initUserSession( 1,"Pääkäyttäjä" );
+			//forward("#etusivu-login-ready");
+			echo "true";
+		}else{
+			echo "false";
 		}
-		
-		forward( "#etusivu-error-wrong_password-or_username"); 
-
-		
 	}
 	
 	if( $_GET["q"] == "logout" ){
@@ -100,7 +99,13 @@
 		
 		forward();
 	}
-	
+	if( $_GET["q"] == "check_login" ){
+		if( $_SESSION['logged_in'] == true ){
+			echo "true";
+		}else{
+			echo "false";
+		}
+	}
 	
 	
 	function initUserSession( $user_id, $username){

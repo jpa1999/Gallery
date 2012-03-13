@@ -9,7 +9,7 @@
 		<link rel="stylesheet" type="text/css" href="css/style.css" />
 		<link rel="stylesheet" type="text/css" href="css/jquery.lightbox-0.5.css" />
 		
-		<script type="text/javascript" src="js/jquery.min.js"></script>
+		<script type="text/javascript" src="js/jquery-1.7.1.min.js"></script>
 		<script type="text/javascript" src="js/jquery-ui.min.js"></script>
 		<script type="text/javascript" src="js/jquery.jeditable.js"></script>
 		<script type="text/javascript" src="js/modernizr-2.5.1.js"></script>
@@ -22,7 +22,17 @@
 		
 	</head>
 	<body>
-		<button class="admin show">Näytä Admin työkalut</button>
+		
+		<div class="login box">
+			<input type="text" value="Käyttäjänimi" name="username"  onFocus="javascript:this.value=''">
+			<input type="text" value="Salasana" name="password" onFocus="javascript:this.value=''">
+			<input type="hidden" value="login" name="q">
+			<button>Login</button>	
+		</div>
+		<div class="logout box admin">
+			<button>Logout</button>	
+		</div>
+		
 		<div class="add_images admin box">
 			<form enctype="multipart/form-data" method="post" action="api/index.php">
 				<input id="image_field" type="file" size="32" name="image_field" value="">
@@ -39,6 +49,7 @@
 				</select>
 			</form>
 		</div>
+		
 		<div class="folders_admin admin box">
 			<div class="folders container">
 				<form action="api" method="get">
@@ -52,7 +63,9 @@
 					</button>
 				</form>
 			</div>
-	</div>
+		</div>
+		
+		
 		<div>	
 			<div class="folders box">
 				<ul class="folders_list"></ul>

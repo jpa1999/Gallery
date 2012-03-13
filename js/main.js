@@ -1,3 +1,5 @@
+var logged_in = false
+
 var start_index
 var end_index
 var folders_loaded = false
@@ -26,6 +28,8 @@ function documentReady() {
 	addHashChangeListener()
 	initView()
 	initButtons()
+	
+	checkLogin()
 }
 
 initView = function() {
@@ -36,13 +40,66 @@ changeViewByHash = function() {
 	
 	resetViews()
 
-	if(hash_target == "folders" || hash_target == "") {
+	if( logged_in ) $(".admin").show()
+	
+	if(hash_target == "folders" || hash_target == ""  || hash_target == "login") {
 		showFoldersView()
+	}
+	if( hash_target == "login") {
+		showLogin()
 	}
 	if(hash_target == "images") {
 		showImagesView()
 	}
 }
+
+//-----------------
+// Login & Logout
+//-----------------
+showLogin = function(){
+	$(".login").show()
+	$(".login button").off("click")
+	$(".login button").on("click", function(){ sendLogin() } )
+}
+sendLogin = function(){
+	username = $(".login input[name=username]").val()
+	password = $(".login input[name=password]").val()
+	$.get("api/?q=login&username=" +username+ "&password=" + password, onLogin )
+}
+onLogin = function( data ){
+	if(data=="true"){
+		logged_in = true
+		$(".login").hide()
+		showLogout()
+	}else{
+		
+	}
+}
+showLogout = function(){
+	$(".logout").show()
+	$(".logout button").off("click")
+	$(".logout button").on("click", function(){ sendLogout() } )
+}
+sendLogout = function(){
+	$(".logout").hide()
+	$.get("api/?q=logout", onLogout )
+	logged_in = false
+}
+onLogout = function( data ){
+	alert( "Uloskirjautuminen onnistui" )
+	showLogin()
+}
+checkLogin = function(){
+	$.get("api/?q=check_login", onCheckLogin )
+}
+onCheckLogin = function( data ){
+	logged_in = (data=="true")? true : false;
+	alert("on check login " + logged_in)
+}
+
+//--------------
+// ShowFolders
+//--------------
 showFoldersView = function() {
 	on_folders = true
 	on_images = false
@@ -62,7 +119,7 @@ resetViews = function() {
 }
 
 initButtons = function(){
-	$("button.admin.show").click( function(){ $(".admin.box").toggle() })
+	
 	
 }
 /*------------------------------*/

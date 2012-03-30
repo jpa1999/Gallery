@@ -13,16 +13,16 @@ function documentReady() {
 	$.template("folderItem", 
 	
 	"<li class='folder item' id='{{=id}}'>" 
-	+ "<a class='thumb' href='#images-{{=id}}-{{=name}}'></a>" 
+	+ "<a class='thumb' href='#images-{{=id}}-{{=name}}'><img src='{{=folder_thumb_url}}'></a>" 
 	+ "<div class='clear'></div>"
 	+ "<div class='edit name' id='{{=id}}'>{{=name}}</div>" 
 	+ "<div class='clear'></div></li>");
 
-	$.template("folderHeader", "<div class='edit name' id='{{=id}}'>{{=name}}</div><div><a class='right' href='api/?q=remove_folder&id={{=id}}'>Poista</a></div>")
+	$.template("folderHeader", "<div class='edit name' id='{{=id}}'>{{=name}}</div><div><a class='right' href='api/?q=remove_folder&id={{=id}}'>Poista</a></div><div class='clear'></div>")
 
 	$.template("imageListItem","<li class='image item' id='{{=id}}'>"
 	+"<a class='image_item' href='uploads/images/{{=filename}}.jpg'><img src='uploads/thumbs/{{=thumbname}}.jpg' /></a>"
-	+"<div><a href='api/?q=remove_image&id={{=id}}'>Poista</a></div>"
+	+"<div class='remove'><a href='api/?q=remove_image&id={{=id}}'>Poista</a></div>"
 	+"</li>")
 	
 	addHashChangeListener()
@@ -104,6 +104,7 @@ showFoldersView = function() {
 	on_folders = true
 	on_images = false
 	initFolders()
+	initImages()
 }
 showImagesView = function() {
 	
@@ -135,6 +136,15 @@ onHashChange = function() {
 	processHash()
 	changeViewByHash()
 }
+
+/*------------------------------*/
+/* onGeneralDataLoaded          */
+/*------------------------------*/
+onDataLoaded = function(){
+	if( folders_loaded && images_loaded ){
+		( on_folders )? showFolders() : showImages();
+	}
+}
 /*------------------------------*/
 /* Images                 */
 /*------------------------------*/
@@ -145,16 +155,17 @@ initImages = function() {
 }
 onImagesDataLoaded = function(){
 	images_loaded = true
-	showImages()
+	onDataLoaded()
+	//showImages()
 }
 showImages = function(){
-	if( folders_loaded && images_loaded ){
+	//if( folders_loaded && images_loaded ){
 		onImagesLoaded()
-	}
+	//}
 }
 onImagesLoaded = function() {
 	
-	
+	alert("Onimages loaded")
 	showFolderHead()
 	
 	$('.image[folder_id="' + hash_status + '"]').each(onImageLoad)
@@ -179,6 +190,8 @@ onImageIndexChange = function() {
 	$.get("api/?q=move_image&folder_id=" + hash_status + "&start=" + start_index + "&end=" + end_index, function(data) { alert( data) })
 }
 onImageLoad = function(index, item) {
+	
+	alert("sadasdasd")
 	var thumbname = $(item).find(".thumbname").html()
 	var filename = $(item).find(".filename").html()
 
@@ -222,17 +235,12 @@ initFolders = function() {
 	$(".folders_data").load("xml/folders.xml?random=" + Math.random(), function(){ parent.onFoldersDataLoaded() }  )
 }
 
-onFoldersDataLoaded = function(){
-	
+onFoldersDataLoaded = function(){	
 	folders_loaded = true
-	
-	if( on_folders ){
-		showFolders()
-	}else{
-		showImages()
-	}
-	
+	onDataLoaded()	
 }
+
+
 showFolders = function() {
 
 	$(".folder").each(onFolder)
@@ -257,10 +265,14 @@ onFolderIndexChange = function() {
 onFolder = function(index, element) {
 
 	//var name = $( element ).find(".name").html()
-	//var id = 	$( element ).attr("id")
-
+	var folder_id = $( element ).attr("id")
+	
+	query = ".images_data .image[folder_id='" + folder_id + "'].find('.thumbname')"
+	folder_thumb_url = "uploads/thumbs/" + $( query ).html()
+	alert( folder_thumb_url + " " + query )
 	var data = [{
 		name : $(element).find(".name").html(),
+		folder_thumb_url : folder_thumb_url,
 		id : $(element).attr("id")
 	}]
 

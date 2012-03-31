@@ -197,6 +197,8 @@ onImagesDataLoaded = function(){
 showImages = function(){
 	//if( folders_loaded && images_loaded ){
 		onImagesLoaded()
+		
+		$(".add_images input[ name='folder_id' ]").val(  hash_status )
 	//}
 }
 onImagesLoaded = function() {

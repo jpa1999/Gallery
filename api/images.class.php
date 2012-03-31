@@ -22,7 +22,7 @@ class Images{
 			exit ("No folders file");	
 		}
 	}
-	public function add( $id, $name, $description ){
+	/*public function add( $id, $name, $description ){
 		
 		$folder = $this->xml->addChild( "div" );
 		$folder->addAttribute( "class", "folder" );
@@ -36,9 +36,9 @@ class Images{
 
 		$this->save();
 		
-		forward("");	
+		forward("#images-" .  );	
 	
-	}
+	}*/
 	public function edit(){
 		
 		$this->simple_xml->edit( "div[@id='" . $_POST['id'] . "']/div[@class='" . $_POST['attr'] . "']",  $_POST['value']);
@@ -47,7 +47,7 @@ class Images{
 		$this->save();
 		echo $_POST['value'];
 		
-		//forward("");	
+		//forward("#images-" . );	
 		
 	}
 	public function move( $start, $end, $folder_id ){
@@ -168,7 +168,7 @@ class Images{
 
 		}
 		
-		forward("");
+		forward("#images-" . $folder_id );
 	}
 	//-----------------
 	// Save

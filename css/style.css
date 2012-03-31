@@ -21,6 +21,11 @@ a{
     margin: 20px;
     margin-bottom: 10px;
 }
+
+.add_images.box{
+	margin:0px; !important;
+	background-color: #ddd;
+}
 button.admin.show{
 	margin:20px;
 }

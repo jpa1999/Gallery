@@ -8,6 +8,8 @@
 		public function loadFileToSimpleXML( $file_path ){
 			
 			$this->file_path = $file_path;
+			$this->createBackupFilename();
+			
 			
 			if( file_exists( $file_path ) ){ 
 				$this->xml = simplexml_load_file( $file_path );
@@ -16,6 +18,15 @@
 				return false; 
 			}
 			
+		}
+		
+		public function createBackupFilename(){
+			//Do backup filename 
+			$backup_file_path_array = explode( "/", $this->file_path );
+			$filename = array_pop(  $backup_file_path_array );
+			array_push( $backup_file_path_array, "backup" );
+			array_push( $backup_file_path_array, date("Y_m_d_H-i-s")."_". $filename );
+			$this->backup_file_path = implode( "/", $backup_file_path_array  );
 		}
 		
 		public function remove( $xpath ){
@@ -46,8 +57,10 @@
 		}
 		public function save(){
 			
-			echo "Saving!: " . $this->printR();
+			//echo "Saving!: " . $this->printR();
 			$this->xml->asXML( $this->file_path );	
+			//Do backup
+			$this->xml->asXML( $this->backup_file_path );	
 		}
 		
 		public function moveArrayItem( $target_array, $old_index, $new_index ){

@@ -13,16 +13,21 @@ function documentReady() {
 	$.template("folderItem", 
 	
 	"<li class='folder item' id='{{=id}}'>" 
-	+ "<a class='thumb' href='#images-{{=id}}-{{=name}}'><img src='{{=folder_thumb_url}}'></a>" 
-	+ "<div class='clear'></div>"
-	+ "<div class='edit name' id='{{=id}}'>{{=name}}</div>" 
+	+ "<div class='thumb_holder'>"
+		+ "<a class='thumb' href='#images-{{=id}}-{{=name}}'><img src='{{=folder_thumb_url}}'></a>" 
+		+ "<div class='clear'></div>"
+	+ "</div>"
+	+ "<div class='edit name' id='{{=id}}'><a href='#images-{{=id}}-{{=name}}'>{{=name}}</a></div>" 
 	+ "<div class='clear'></div></li>");
 
 	$.template("folderHeader", "<div class='edit name' id='{{=id}}'>{{=name}}</div><div><a class='right' href='api/?q=remove_folder&id={{=id}}'>Poista</a></div><div class='clear'></div>")
 
 	$.template("imageListItem","<li class='image item' id='{{=id}}'>"
-	+"<a class='image_item' href='uploads/images/{{=filename}}.jpg'><img src='uploads/thumbs/{{=thumbname}}.jpg' /></a>"
-	+"<div class='remove'><a href='api/?q=remove_image&id={{=id}}'>Poista</a></div>"
+	+ "<div class='thumb_holder'>"
+		+"<a class='image_item' href='uploads/images/{{=filename}}.jpg' title='{{=image_description}}'><img src='uploads/thumbs/{{=thumbname}}.jpg' /></a>"
+	+ "</div>"
+	+ "<div class='edit name' id='{{=id}}'><a href='#images-{{=id}}-{{=name}}'>{{=image_description}}</a></div>" 
+	+"<div class='remove admin'><a href='api/?q=remove_image&id={{=id}}'>Poista</a></div>"
 	+"</li>")
 	
 	addHashChangeListener()
@@ -39,8 +44,7 @@ initView = function() {
 changeViewByHash = function() {
 	
 	resetViews()
-
-	if( logged_in ) $(".admin").show()
+	tryShowingAdminTools()
 	
 	if(hash_target == "folders" || hash_target == ""  || hash_target == "login") {
 		showFoldersView()
@@ -52,7 +56,18 @@ changeViewByHash = function() {
 		showImagesView()
 	}
 }
-
+//-----------------
+// Admin tools
+//-----------------
+tryShowingAdminTools = function(){
+	if( logged_in ){
+		$(".admin").show()
+		showLogout()
+	}
+}
+tryHidingAdminTools = function(){
+	$(".admin").hide()
+}
 //-----------------
 // Login & Logout
 //-----------------
@@ -71,6 +86,7 @@ onLogin = function( data ){
 		logged_in = true
 		$(".login").hide()
 		showLogout()
+		tryShowingAdminTools()
 	}else{
 		
 	}
@@ -84,17 +100,19 @@ sendLogout = function(){
 	$(".logout").hide()
 	$.get("api/?q=logout", onLogout )
 	logged_in = false
+	
+	tryHidingAdminTools()
 }
 onLogout = function( data ){
 	alert( "Uloskirjautuminen onnistui" )
-	showLogin()
+	//showLogin()
 }
 checkLogin = function(){
 	$.get("api/?q=check_login", onCheckLogin )
 }
 onCheckLogin = function( data ){
 	logged_in = (data=="true")? true : false;
-	alert("on check login " + logged_in)
+	if( logged_in) tryShowingAdminTools()
 }
 
 //--------------
@@ -152,6 +170,9 @@ initImages = function() {
 	images_loaded = false
 	parent = this
 	$(".images_data").load("xml/images.xml?random=" + Math.random(), function(){ parent.onImagesDataLoaded() } )
+	$(".folders.box").hide()
+	$(".images.box").show()
+	
 }
 onImagesDataLoaded = function(){
 	images_loaded = true
@@ -165,10 +186,10 @@ showImages = function(){
 }
 onImagesLoaded = function() {
 	
-	alert("Onimages loaded")
 	showFolderHead()
 	
 	$('.image[folder_id="' + hash_status + '"]').each(onImageLoad)
+	
 	
 	$(".images_list").sortable({
 		start : function(event, ui) {
@@ -181,6 +202,7 @@ onImagesLoaded = function() {
 		cursor : 'move'
 
 	});
+	
 	$(".images_list").disableSelection();
 	
 	$('a.image_item').lightBox();
@@ -191,13 +213,14 @@ onImageIndexChange = function() {
 }
 onImageLoad = function(index, item) {
 	
-	alert("sadasdasd")
 	var thumbname = $(item).find(".thumbname").html()
 	var filename = $(item).find(".filename").html()
-
-	var id = $(item).attr("id")
+	var image_description = $(item).find(".description").html()
 	
+	var id = $(item).attr("id")
+		
 	var data = [{
+		image_description : image_description,
 		thumbname : thumbname,
 		filename : filename,
 		id : id
@@ -205,8 +228,6 @@ onImageLoad = function(index, item) {
 
 	$(".images_list").append( $.render(data, "imageListItem") )
 	
-	
-
 }
 /*-----------------------------*/
 /* Folders                     */
@@ -242,7 +263,10 @@ onFoldersDataLoaded = function(){
 
 
 showFolders = function() {
-
+	
+	$(".folders.box").show()
+	$(".images.box").hide()
+	
 	$(".folder").each(onFolder)
 	$(".folders_list").sortable({
 		start : function(event, ui) {
@@ -267,9 +291,9 @@ onFolder = function(index, element) {
 	//var name = $( element ).find(".name").html()
 	var folder_id = $( element ).attr("id")
 	
-	query = ".images_data .image[folder_id='" + folder_id + "'].find('.thumbname')"
-	folder_thumb_url = "uploads/thumbs/" + $( query ).html()
-	alert( folder_thumb_url + " " + query )
+	query = ".images_data .image[folder_id='" + folder_id + "']"
+	folder_thumb_url = "uploads/thumbs/" + $( query ).find('.thumbname').html() + ".jpg"
+	 
 	var data = [{
 		name : $(element).find(".name").html(),
 		folder_thumb_url : folder_thumb_url,

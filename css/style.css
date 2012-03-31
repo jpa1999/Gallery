@@ -6,6 +6,7 @@ body{
 a{
 	font-size:11px;
 	text-decoration:none;
+	color:#3B5998;
 }
 .login{
 	display:none;
@@ -26,20 +27,27 @@ button.admin.show{
 .admin.box{
 	display:none;
 }
+.images.box{
+	display:none;
+}
 .folders_list {
     list-style-type: none;
     margin: 0;
     padding: 0;
 }
-
-.folders_list li, .images_list li {
+.folders_list li, .images_list li{
+	float:left;
+	width: 177px;
+	margin-left:10px;
+}
+.folders_list li>.thumb_holder, .images_list li>.thumb_holder {
     border: 1px solid #cccccc;
     background-color: white; 		
     padding: 5px;
     width: 167px;
     height: 110px;
     list-style-image: none;
-    margin: 5px;
+    margin-bottom: 5px;
     float: left;
     overflow: hidden;
     display: inline;
@@ -78,11 +86,13 @@ a.image_item{
 	padding:0px;
 	margin-top:5px;
 	float:left;
-	font-size:16px;
+	font-weight:bold;
+	font-size:12px;
+	color:#3B5998;
 	
 }
 .edit.name input{
-	width:100%px;
+	width:500px !important;
 	padding:20px;
 }
 .placeholder_box {
@@ -94,12 +104,15 @@ a.image_item{
     background-color: #F4F4F4
 }
 
-.images_data{
-	
+/*----------------*/
+/* Data container */
+/*----------------*/
+.folders_data, .images_data{
 	display:none;
 }
+
 .left {
-    floaT: left;
+    float: left;
 }
 
 .right {

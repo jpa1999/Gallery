@@ -38,7 +38,7 @@
 			$folders->edit();
 		}
 		if( $_POST["cat"] == "image" ){
-		
+			$images->edit();
 		}
 
 		

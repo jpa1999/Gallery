@@ -42,6 +42,7 @@ class Folders{
 	public function edit(){
 		
 		$this->simple_xml->edit( "div[@id='" . $_POST['id'] . "']/div[@class='" . $_POST['attr'] . "']",  $_POST['value']);
+		
 		$this->save();
 		echo $_POST['value'];
 		

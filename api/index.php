@@ -1,6 +1,11 @@
 <?PHP
 	session_start();
 	
+	if( $_SESSION['logged_in'] != true &&  $_GET["q"] != "login" ){
+		forward("");
+		die();
+	}
+	
 	require_once "class.upload_0.30.php";
 	require_once "folders.class.php";
 	require_once "images.class.php";
@@ -60,6 +65,8 @@
 			
 		$id = cleanString( $_GET["id"] );
 		$images->remove( $id );
+		
+		forward( "#images-" . $_GET[ "folder_id" ] );
 	}
 	//---------------------------------
 	// UPLOAD IMAGES

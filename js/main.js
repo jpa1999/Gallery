@@ -11,6 +11,7 @@ $(document).ready(documentReady)
 
 function documentReady() {
 
+	// Folder item
 	$.template("folderItem", 
 	
 	"<li class='folder item' id='{{=id}}'>" 
@@ -23,17 +24,11 @@ function documentReady() {
 	
 	// Folder header
 	$.template("folderHeader", "<div class='left'><a href='index.html'>Kansiot  &nbsp; &#9654; &nbsp; </a> <span class='edit name' id='{{=id}}'>{{=name}}</span></div>"
-												+"<div><a class='right danger admin' href='javascript:removeFolder({{=id}})'>Poista</a>"
-												+"</div><div class='clear'></div>")
-	
-	// Image item
-	$.template("imageListItem","<li class='image item' id='{{=id}}'>"
-	+ "<div class='thumb_holder'>"
-		+"<a class='image_item' href='uploads/images/{{=filename}}.jpg' title='{{=image_description}}'><img src='uploads/thumbs/{{=thumbname}}.jpg' /></a>"
-	+ "</div>"
-	+ "<div class='edit name' id='{{=id}}'>{{=image_description}}</div>" 
-	+"<div class='remove admin'><a class='danger' href='api/?q=remove_image&id={{=id}}'>Poista</a></div>"
-	+"</li>")
+												+"<div><a class='right danger admin' href='javascript:removeFolder({{=id}})'>Poista</a></div>"
+												+"<div class='clear'></div>"
+												+"<div class='edit description' id='{{=id}}'>{{=description}}</div>"
+												+"<div class='clear'></div>"
+												)
 	
 	// Add folder
 	add_folder_form_template = 
@@ -48,6 +43,16 @@ function documentReady() {
 			+ '</form>'
 		+ '</div>'
 	+ '</div>'
+	
+		// Image item
+	$.template("imageListItem","<li class='image item' id='{{=id}}'>"
+	+"<div class='remove admin'><a class='danger' href='api/?q=remove_image&id={{=id}}&folder_id={{=folder_id}}'>Poista</a></div>"
+	+ "<div class='thumb_holder'>"
+		+"<a class='image_item' href='uploads/images/{{=filename}}.jpg' title='{{=image_description}}'><img src='uploads/thumbs/{{=thumbname}}.jpg' /></a>"
+	+ "</div>"
+	+"<div class='clear'></div>"
+	+ "<div class='edit name' id='{{=id}}'>{{=image_description}}</div>" 
+	+"</li>")
 	
 	// Add image 
 	add_image_form_template = 
@@ -76,6 +81,8 @@ function documentReady() {
 onDataLoaded = function(){
 	if( folders_loaded && images_loaded && admin_checked ){
 		( on_folders )? showFolders() : showImages();
+		tryShowingAdminTools()
+		if( logged_in ) setJeditables()
 	}
 }
 
@@ -106,8 +113,9 @@ tryShowingAdminTools = function(){
 	if( logged_in ){
 		$(".admin").show()
 		//$( ".folder_select" ).vall( hash_status ) 
-		
 		showLogout()
+	}else{
+		tryHidingAdminTools()
 	}
 }
 tryHidingAdminTools = function(){
@@ -234,25 +242,33 @@ showImages = function(){
 	//}
 }
 onImagesLoaded = function() {
-	
 	showFolderHead()
-	
 	$('.image[folder_id="' + hash_status + '"]').each( onImageLoad )
-	
-	//Set sortable for images
-	$(".images_list").sortable({
-		start : function(event, ui) {
-			start_index = ui.item.index()
-		},
-		update : function(event, ui) {
-			end_index = ui.item.index();
-			onImageIndexChange()
-		},
-		cursor : 'move'
+	$(".images_list").disableSelection();
+	$('a.image_item').lightBox();
 
-	});
-	//Set jeditable for image descriptions
-	if( logged_in ){
+}
+
+setJeditables = function(){
+	
+		//-------------------------------
+		// Set sortable for images
+		//-------------------------------
+		$(".images_list").sortable(
+			{
+				start : function(event, ui) {
+				start_index = ui.item.index()
+			},
+			update : function(event, ui) {
+				end_index = ui.item.index();
+				onImageIndexChange()
+			},
+			cursor : 'move'
+
+		});
+		//-------------------------------
+		// Set jeditable for image descriptions
+		//-------------------------------
 		$('.images_list .edit.name').editable('api/', {
 			submitdata : {
 				q : "edit",
@@ -262,15 +278,32 @@ onImagesLoaded = function() {
 			indicator : "Saving...",
 			complete : function (xhr, textStatus){ alert("kukkuu") }
 		});
-	}else{
-		alert("Not logged in")
-	}
-	
-	$(".images_list").disableSelection();
-	
-	$('a.image_item').lightBox();
-
+		//-------------------------------
+		// Set jeditable for folder description
+		//-------------------------------
+		$('.folder_header .edit.description').editable('api/', {
+			submitdata : {
+				q : "edit",
+				cat : "folder",
+				attr : "description"
+			},
+			indicator : "Saving...",
+			complete : function (xhr, textStatus){ alert("Folder description edited") }
+		});
+		//-------------------------------
+		// Set jeditable for folder name
+		//-------------------------------
+		$('.folder_header .edit.name').editable('api/', {
+			submitdata : {
+				q : "edit",
+				cat : "folder",
+				attr : "name"
+			},
+			indicator : "Saving...",
+			complete : function (xhr, textStatus){ alert("kukkuu") }
+		});
 }
+
 onImageIndexChange = function() {
 	$.get("api/?q=move_image&folder_id=" + hash_status + "&start=" + start_index + "&end=" + end_index, function(data) {  /* alert( data ) */ })
 }
@@ -286,6 +319,7 @@ onImageLoad = function(index, item) {
 		image_description : image_description,
 		thumbname : thumbname,
 		filename : filename,
+		folder_id :  hash_status,
 		id : id
 	}]
 
@@ -302,18 +336,11 @@ showFolderHead = function() {
 	
 	var data = [{
 		name : $(".folders_data .folders #" + hash_status + " .name" ).html(),
+		description : $(".folders_data .folders #" + hash_status + " .description" ).html(),
 		id : hash_status
 	}]
 	$(".folder_header").append($.render(data, "folderHeader"))
-	$('.folder_header .edit.name').editable('api/', {
-		submitdata : {
-			q : "edit",
-			cat : "folder",
-			attr : "name"
-		},
-		indicator : "Saving...",
-		complete : function (xhr, textStatus){ alert("kukkuu") }
-	});
+	
 
 }
 initFolders = function() {
@@ -354,11 +381,15 @@ onFolderIndexChange = function() {
 }
 onFolder = function(index, element) {
 
-	//var name = $( element ).find(".name").html()
 	var folder_id = $( element ).attr("id")
 	
 	query = ".images_data .image[folder_id='" + folder_id + "']"
-	folder_thumb_url = "uploads/thumbs/" + $( query ).find('.thumbname').html() + ".jpg"
+	
+	if( $( query ).find('.thumbname').html() ){
+		folder_thumb_url = "uploads/thumbs/" + $( query ).find('.thumbname').html() + ".jpg"
+	}else{
+		folder_thumb_url = "images/default_folder_image.jpg"
+	}
 	 
 	var data = [{
 		name : $(element).find(".name").html(),

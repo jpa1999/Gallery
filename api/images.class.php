@@ -73,7 +73,7 @@ class Images{
 	public function remove( $id ){
 		$this->simple_xml->remove( "div[@id='" .$id. "']" );
 		$this->save();
-		forward("");	
+		//forward("");	
 		
 		/*
 		 * 	$id = cleanString( $_GET["id"] );
@@ -136,7 +136,8 @@ class Images{
 			$foo->file_new_name_body = 'image';
 			$foo->image_resize = true;
 			$foo->image_x = 600;
-			$foo->image_ratio_y = true;
+			$foo->image_x = 500;
+			$foo->image_ratio = true;
 			$foo->Process('../uploads/images/');
 			$image_file_name = $foo->file_dst_name_body;
 			

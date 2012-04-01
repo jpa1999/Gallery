@@ -20,18 +20,47 @@ function documentReady() {
 	+ "</div>"
 	+ "<div class='edit name' id='{{=id}}'><a href='#images-{{=id}}-{{=name}}'>{{=name}}</a></div>" 
 	+ "<div class='clear'></div></li>");
-
-	$.template("folderHeader", "<div class='edit name' id='{{=id}}'>{{=name}}</div>"
-												+"<div><a class='right' href='api/?q=remove_folder&id={{=id}}'>Poista</a>"
+	
+	// Folder header
+	$.template("folderHeader", "<div class='left'><a href='index.html'>Kansiot  &nbsp; &#9654; &nbsp; </a> <span class='edit name' id='{{=id}}'>{{=name}}</span></div>"
+												+"<div><a class='right danger admin' href='javascript:removeFolder({{=id}})'>Poista</a>"
 												+"</div><div class='clear'></div>")
-
+	
+	// Image item
 	$.template("imageListItem","<li class='image item' id='{{=id}}'>"
 	+ "<div class='thumb_holder'>"
 		+"<a class='image_item' href='uploads/images/{{=filename}}.jpg' title='{{=image_description}}'><img src='uploads/thumbs/{{=thumbname}}.jpg' /></a>"
 	+ "</div>"
 	+ "<div class='edit name' id='{{=id}}'>{{=image_description}}</div>" 
-	+"<div class='remove admin'><a href='api/?q=remove_image&id={{=id}}'>Poista</a></div>"
+	+"<div class='remove admin'><a class='danger' href='api/?q=remove_image&id={{=id}}'>Poista</a></div>"
 	+"</li>")
+	
+	// Add folder
+	add_folder_form_template = 
+	'<div class="folders_admin admin tools box">'
+		+ '<div class="folders container">'
+			+ '<form action="api" method="get">'
+				+ 'Lisää kuvakansio:'
+				+ '<input type="text" name="name" placeholder="Kansion nimi"/>'
+				+ '<input type="text" name="description" placeholder="Kansion kuvaus" />'
+				+ '<input type="hidden" name="q" value="add_folder" />'
+				+ '<button type="submit">Lisää uusi kansio</button>'
+			+ '</form>'
+		+ '</div>'
+	+ '</div>'
+	
+	// Add image 
+	add_image_form_template = 
+		'<div class="add_images admin tools box">'
+			+ '<form enctype="multipart/form-data" method="post" action="api/index.php">'
+				+'Lisää kuva:'
+				+ '<input type="text" class="description" name="description" placeholder="Kuvan otsikko">'
+				+ '<input type="hidden" name="folder_id" value="">'
+				+ '<input id="image_field" type="file" size="32" name="image_field" value="">'
+				+ '<input type="hidden" name="q" value="upload" />'
+				+ '<input type="submit" name="Submit" value="upload">  '
+			+ '</form>'
+		 + ' </div>' 
 	
 	addHashChangeListener()
 	initView()
@@ -39,6 +68,7 @@ function documentReady() {
 	
 	checkLogin()
 }
+
 
 /*------------------------------*/
 /* On All Data Loaded start rendering    */
@@ -72,8 +102,6 @@ changeViewByHash = function() {
 // Admin tools
 //-----------------
 tryShowingAdminTools = function(){
-
-	alert("try showing admin tools" + logged_in )
 	
 	if( logged_in ){
 		$(".admin").show()
@@ -111,8 +139,8 @@ onLogin = function( data ){
 }
 showLogout = function(){
 	$(".logout").show()
-	$(".logout button").off("click")
-	$(".logout button").on("click", function(){ sendLogout() } )
+	$("button.logout").off("click")
+	$("button.logout").on("click", function(){ sendLogout() } )
 }
 sendLogout = function(){
 	$(".logout").hide()
@@ -122,14 +150,12 @@ sendLogout = function(){
 	tryHidingAdminTools()
 }
 onLogout = function( data ){
-	alert( "Uloskirjautuminen onnistui" )
 	//showLogin()
 }
 checkLogin = function(){
 	$.get("api/?q=check_login", onCheckLogin )
 }
 onCheckLogin = function( data ){
-	alert("onCheckLogin " + data)
 	admin_checked = true;
 	logged_in = (data=="true")? true : false;
 	if( logged_in) tryShowingAdminTools()
@@ -155,8 +181,14 @@ showImagesView = function() {
 	
 }
 resetViews = function() {
-	$(".images.box").append( "<div class='folder_header'></div><ul class='images_list'></ul><div class='clear'></div>" )
-	$(".folders_list").html("")
+	$(".images.box").html( "<div class='folder_header'></div>" )
+	$(".images.box").append( 	add_image_form_template )
+	$(".images.box").append( "<ul class='images_list'></ul>" )
+	$(".images.box").append( "</ul><div class='clear'></div>" )
+	
+	$(".folders.box").html(  add_folder_form_template  )
+	$(".folders.box").append( '<ul class="folders_list"></ul>' )
+	$(".folders.box").append( '<div class="clear"></div>' )
 }
 
 initButtons = function(){
@@ -337,6 +369,16 @@ onFolder = function(index, element) {
 	$(".folder_select").append("<option value=" + data[0].id + ">" + data[0].name + "</option>")
 	$(".folders_list").append($.render(data, "folderItem"))
 
+}
+
+
+removeFolder= function( folder_id ){
+	alert("Folder_id" + folder_id )
+	confirm_folder_remove = confirm("Haluatko poistaa koko kansion numero: " + folder_id + "?");
+	if( confirm_folder_remove ){
+		document.location(  "api/?q=remove_folder&id=" + folder_id   )
+	}
+	
 }
 /*---------------------------------*/
 /* Hash                            */

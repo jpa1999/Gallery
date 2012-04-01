@@ -29,56 +29,13 @@
 			<input type="hidden" value="login" name="q">
 			<button>Login</button>	
 		</div>
-		<div class="logout box admin">
-			<button>Logout</button>	
-		</div>
-		
-		
-		
-		<div class="folders_admin admin box">
-			<div class="folders container">
-				<form action="api" method="get">
-					Lisää kuvakansio:
-					<input type="text" name="name" placeholder="Kansion nimi"/>
-					<input type="text" name="description" placeholder="Kansion kuvaus">
-					</input>
-					<input type="hidden" name="q" value="add_folder" />
-					<button type="submit">
-						Lisää uusi kansio
-					</button>
-				</form>
-			</div>
-		</div>
-		
-		
-			
-			<div class="folders box">
-				<ul class="folders_list"></ul>
-				<div class="clear"></div>
-			</div>
-			<div class="clear"></div>
 	
-		
+		<button class="logout">Kirjaudu ulos</button>	
 		<div class="clear"></div>
-		<div class="images box">
 		
-		   <div class="add_images admin box">
-				 <form enctype="multipart/form-data" method="post" action="api/index.php">
-				   Lisää kuva:
-				   <!-- <select class="folder_select" name="folder_id">
-					   <option value="0">Valitse kansio:</option>
-				   </select> 
-				   Kuvateksti: -->
-				   <input type="text" name="description" placeholder="Kuvan otsikko">
-				   <input type="hidden" name="folder_id" value="">
-				   <input id="image_field" type="file" size="32" name="image_field" value="">
-				   <input type="hidden" name="q" value="upload" />
-				   <input type="submit" name="Submit" value="upload">
-				   
-			   </form>
-		   </div>
-		
-		<!-- This will be replaced from javascript --></div>
+		<div class="folders box"><!-- This will be replaced from javascript --></div>
+		<div class="clear"></div>
+		<div class="images box"><!-- This will be replaced from javascript --></div>
 		<!---------------------------------->
 		<!-- DATA -------------------------->
 		<!---------------------------------->
